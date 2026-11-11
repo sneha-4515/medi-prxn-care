@@ -1,0 +1,9 @@
+.git
+__pycache__
+*.pyc
+*.db
+tests
+.env
+*.md
+deploy
+docker-compose.yml

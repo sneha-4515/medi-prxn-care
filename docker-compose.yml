@@ -1,0 +1,21 @@
+# Local production-like run with Postgres:  docker compose up --build   ->  http://localhost:8080
+services:
+  db:
+    image: postgres:16
+    environment: { POSTGRES_USER: mpc, POSTGRES_PASSWORD: mpcpass, POSTGRES_DB: mpc }
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U mpc"], interval: 3s, retries: 10 }
+  web:
+    build: .
+    ports: ["8080:8080"]
+    depends_on: { db: { condition: service_healthy } }
+    environment:
+      ENV: production
+      SECRET_KEY: local-compose-secret-change-me
+      DATABASE_URL: postgresql://mpc:mpcpass@db:5432/mpc
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      DEMO_SEED: "1"
+      ADMIN_EMAIL: admin@mediprxncare.app
+      ADMIN_PASSWORD: admin12345
+      PAYPAL_CLIENT_ID: ${PAYPAL_CLIENT_ID:-}
+      PAYPAL_CLIENT_SECRET: ${PAYPAL_CLIENT_SECRET:-}
+      PAYPAL_WEBHOOK_ID: ${PAYPAL_WEBHOOK_ID:-}

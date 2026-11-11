@@ -1,0 +1,2 @@
+{"name":"Medi-Prxn Care","short_name":"Medi-Prxn","description":"Prescriptions, refills, dose alarms and check-ups for the whole family","start_url":"/","display":"standalone","background_color":"#f3f8f8","theme_color":"#0b4a56",
+ "icons":[{"src":"/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"/icon-512.png","sizes":"512x512","type":"image/png","purpose":"any maskable"}]}
