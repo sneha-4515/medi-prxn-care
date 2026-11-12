@@ -8,7 +8,7 @@ Safety design:
 3. Nothing is stored unless the user presses "Save summary". Family health details are used only for the family member
    the user selects for the chat.
 Works without a Gemini key through a fixed question flow, so the demo runs offline."""
-import json, re, time, logging
+import json, re, time, logging, concurrent.futures
 from datetime import date
 from typing import Literal
 from collections import defaultdict, deque
@@ -165,6 +165,10 @@ def _gemini(msgs, ctx):
             "stage": "guidance" if d.get("stage") == "guidance" or s else "asking", "suggest_consult": bool(d.get("suggest_consult")), "summary": s}
 
 
+_pool = concurrent.futures.ThreadPoolExecutor(max_workers=4)
+def _gemini_fast(msgs, ctx, seconds=None):
+    """Hard ceiling on how long a chat reply may wait for Gemini. On timeout the caller falls back to the guided flow."""
+    return _pool.submit(_gemini, msgs, ctx).result(timeout=seconds or config.ASSIST_TIMEOUT_S)
 @router.post("/message")
 def message(t: Turn, u=Depends(require("patient"))):
     _limit(u["uid"])
@@ -175,7 +179,7 @@ def message(t: Turn, u=Depends(require("patient"))):
     ctx = _context(_member(u, t.patient_id))
     out, mode = None, "guided"
     if ai.KEY:
-        try: out, mode = _gemini(t.messages, ctx), "gemini"
+        try: out, mode = _gemini_fast(t.messages, ctx), "gemini"
         except Exception as e:
             log.warning("assistant model failed, using offline flow: %s", e)
     if out is None:

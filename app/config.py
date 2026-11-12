@@ -12,6 +12,8 @@ DB_PATH = os.getenv("DB_PATH", "mediprxncare.db")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 GEMINI_MODEL = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
 GEMINI_FALLBACK_MODEL = os.getenv("GEMINI_FALLBACK_MODEL")   # optional backup model name
+GEMINI_THINKING = os.getenv("GEMINI_THINKING")   # e.g. "minimal" or "low"; empty = model default
+ASSIST_TIMEOUT_S = float(os.getenv("ASSIST_TIMEOUT_S", "8"))
 ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
 ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD")
 DEMO_SEED = os.getenv("DEMO_SEED") == "1"

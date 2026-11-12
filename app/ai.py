@@ -28,7 +28,10 @@ def _json(text):
 def _generate(contents, json_mode=False):
     """Call Gemini. Retries temporary errors (500/503/504), skips retries on 429, tries the fallback model if set."""
     from google.genai import types, errors as genai_errors
-    cfg = types.GenerateContentConfig(response_mime_type="application/json") if json_mode else None
+    kw = {}
+    if json_mode: kw["response_mime_type"] = "application/json"
+    if config.GEMINI_THINKING: kw["thinking_config"] = types.ThinkingConfig(thinking_level=config.GEMINI_THINKING)
+    cfg = types.GenerateContentConfig(**kw) if kw else None
     models = [MODEL] + ([config.GEMINI_FALLBACK_MODEL] if config.GEMINI_FALLBACK_MODEL else [])
     last = None
     for model in models:
